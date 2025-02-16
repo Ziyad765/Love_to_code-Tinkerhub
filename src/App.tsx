@@ -12,6 +12,8 @@ function App() {
   const [message, setMessage] = useState('');
   const [roomId, setRoomId] = useState<string | null>(null);
   const [playerId, setPlayerId] = useState<string | null>(null);
+  const [playerCount, setPlayerCount] = useState(0); // New state for player count
+  const [gameStarted, setGameStarted] = useState(false); // New state for game start
 
   useEffect(() => {
     const setupGame = async () => {
@@ -22,6 +24,9 @@ function App() {
           })
           .on('broadcast', { event: 'message' }, ({ payload }) => {
             setMessage(payload);
+          })
+          .on('broadcast', { event: 'player_joined' }, ({ payload }) => {
+            setPlayerCount(payload.count); // Update player count on join
           })
           .subscribe();
 
@@ -82,6 +87,11 @@ function App() {
         setMessage('Error joining room. Please try again.');
       }
     }
+  };
+
+  const handleStartGame = () => {
+    setGameStarted(true);
+    // Logic to start the game and ask questions
   };
 
   const handleSubmitAnswer = async () => {
@@ -211,6 +221,16 @@ function App() {
               )}
             </div>
           )}
+
+          {/* Start Game Button */}
+          {playerCount >= 2 && !gameStarted && (
+            <button
+              onClick={handleStartGame}
+              className="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition duration-200"
+            >
+              Start Game
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -218,3 +238,4 @@ function App() {
 }
 
 export default App;
+</create_file>
